@@ -7,6 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -17,7 +18,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
-public class MainActivity extends AppCompatActivity  implements View.OnClickListener {
+public class Login extends AppCompatActivity  implements View.OnClickListener {
 
     private Button btn;
     private EditText text1;
@@ -25,71 +26,74 @@ public class MainActivity extends AppCompatActivity  implements View.OnClickList
     private TextView text3;
     private TextView text4;
 
-    private ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
+    private ProgressDialog progressDialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
-        firebaseAuth=FirebaseAuth.getInstance();
-        progressDialog= new ProgressDialog(this);
 
-        btn= (Button) findViewById(R.id.buttonSignup);
+        btn= (Button) findViewById(R.id.buttonSignin);
 
         text1= (EditText) findViewById(R.id.editTextEmail);
         text2= (EditText) findViewById(R.id.editTextPassword);
 
-        text3= (TextView) findViewById(R.id.textViewSignin);
-        text4= (TextView) findViewById(R.id.textRegis);
+        text3= (TextView) findViewById(R.id.textViewSignup);
+        text4= (TextView) findViewById(R.id.textLog);
 
-
+        firebaseAuth= FirebaseAuth.getInstance();
+        progressDialog=new ProgressDialog(this);
 
         btn.setOnClickListener(this);
         text3.setOnClickListener(this);
 
     }
 
-    private void registerUser(){
+    private void userLogin(){
         String email= text1.getText().toString().trim();
         String password= text2.getText().toString().trim();
 
-
-
-        progressDialog.setMessage("Registering please wait....");
+        progressDialog.setMessage("Login in progress. Please wait....");
         progressDialog.show();
 
+
         firebaseAuth.createUserWithEmailAndPassword(email,password)
-                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
 
-
-                        if(task.isSuccessful()){
-                            finish();
-                            startActivity(new Intent(getApplicationContext(),Login.class));
-                        }
-                        else{
-                            Toast.makeText(getApplicationContext(),"Registration error....",Toast.LENGTH_SHORT).show();
-                        }
+                       if(task.isSuccessful()){
+                           finish();
+                           startActivity(new Intent(getApplicationContext(),caffee.class));
+                       }
+                       else
+                       {
+                           Toast.makeText(getApplicationContext(),"Email or Password is incorrect",Toast.LENGTH_SHORT).show();
+                       }
                         progressDialog.dismiss();
-
                     }
                 });
-    }
 
+    }
     @Override
     public void  onClick(View view){
         if(view==btn){
-            registerUser();
+            userLogin();
         }
         if(view==text3){
-            startActivity(new Intent(getApplicationContext(),Login.class));
+            startActivity(new Intent(getApplicationContext(),MainActivity.class));
 
         }
 
     }
+
+
+
+
+
+
+
 }
-
-
